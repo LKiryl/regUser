@@ -10,7 +10,6 @@ if (file_exists('users.json')){
 }
 
 function clear_data($val){
-    $val = trim($val);
     $val = stripslashes($val);
     $val = strip_tags($val);
     $val = htmlspecialchars($val);
@@ -45,6 +44,26 @@ if (strlen($login) < 6 || empty($login)) {
 
     die();
 }
+for($i=0;$i<strlen($login);$i++) {
+    if($login[$i]== " ") {
+        $error_fields[] = 'login';
+        $error['login'] = "Логин не должен содержать пробелы";
+        $flag = 1;
+
+        $response = [
+            "status" => false,
+            "type" => 2,
+            "message" => $error['login'],
+            "fields" => $error_fields
+        ];
+
+        echo json_encode($response);
+
+        die();
+    }
+
+}
+
 function check_login($js,$log, $e)
 {
     foreach ($js as $check_login) {
@@ -130,6 +149,39 @@ else if (! preg_match('~[a-zа-яё]~', $pass)){
     echo json_encode($response);
 
     die();
+}else if(preg_match('~[!@#$%^&*]~', $pass)){
+    $error_fields[] = 'pass';
+    $error['pass'] = "Пароль должен содержать только буквы и цифры";
+    $flag = 1;
+    $response = [
+        "status" => false,
+        "type" => 3,
+        "message" => $error['pass'],
+        "fields" => $error_fields
+    ];
+
+    echo json_encode($response);
+
+    die();
+}
+for($i=0;$i<strlen($pass);$i++) {
+    if($pass[$i]== " ") {
+        $error_fields[] = 'pass';
+        $error['pass'] = "Пароль не должен содержать пробелы";
+        $flag = 1;
+
+        $response = [
+            "status" => false,
+            "type" => 3,
+            "message" => $error['pass'],
+            "fields" => $error_fields
+        ];
+
+        echo json_encode($response);
+
+        die();
+    }
+
 }
 
 
@@ -166,7 +218,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
 }
 
 
-if (strlen($name) < 2 || empty($name)){
+if (strlen($name) < 2  || empty($name)){
     $error_fields[] = 'name';
     $error['name'] = "Имя должно быть не меньше 2 символов";
     $flag = 1;
@@ -180,7 +232,22 @@ if (strlen($name) < 2 || empty($name)){
     echo json_encode($response);
 
     die();
-} else if (! preg_match('~[а-яё]~', $name)){
+}else if(strlen($name) > 2){
+    $error_fields[] = 'name';
+    $error['name'] = "Имя должно быть не больше 2 символов";
+    $flag = 1;
+    $response = [
+        "status" => false,
+        "type" => 6,
+        "message" => $error['name'],
+        "fields" => $error_fields
+    ];
+
+    echo json_encode($response);
+
+    die();
+
+} else if (! preg_match('~[a-z]~', $name)){
     $error_fields[] = 'name';
     $error['name'] = "Введите корректное имя";
     $flag = 1;
@@ -223,3 +290,4 @@ $response = [
     "message" => "Регистрация прошла успешно!",
 ];
 echo json_encode($response);
+
