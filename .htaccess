@@ -1,0 +1,9 @@
+<Files "users.json">
+  Order  allow,deny
+  Deny   from All
+</Files>
+<Files "db.php">
+  Order  allow,deny
+  Deny   from All
+</Files>
+
